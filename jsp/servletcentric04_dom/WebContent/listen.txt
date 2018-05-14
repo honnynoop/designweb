@@ -1,0 +1,10 @@
+
+  <filter>
+    <display-name>init.do</display-name>
+    <filter-name>init.do</filter-name>
+    <filter-class>com.jungbo.servlet.centric.control.ActionInitMappingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>init.do</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>

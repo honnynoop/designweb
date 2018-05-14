@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+<Resource 
+driverClassName="oracle.jdbc.driver.OracleDriver"
+maxActive="20" 
+maxIdle="2" 
+maxWait="5000" 
+name="jdbc/nomvc" 
+username="hr"
+password="jungbo" 
+type="javax.sql.DataSource" 
+url="jdbc:oracle:thin:@127.0.0.1:1521:xe" />
+</Context>

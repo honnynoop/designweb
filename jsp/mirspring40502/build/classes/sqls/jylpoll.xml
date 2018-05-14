@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="JYLPoll"> 
+<select id="getPoll" 
+parameterType="com.mirhenge.jyl.poll.model.JYLPoll"
+resultType="com.mirhenge.jyl.poll.model.JYLPoll">
+SELECT POLLID, ID,   QUESTION,
+SDATE ,EDATE, ITEMCOUNT,
+POLLTOTAL, REGDATE 
+FROM JYL_POLL 
+WHERE POLLID=#{pollid}
+</select>
+<select id="getPollSubList" 
+parameterType="com.mirhenge.jyl.poll.model.JYLPoll"
+resultType="com.mirhenge.jyl.poll.model.JYLPollSub">
+SELECT POLLSUBID, POLLID, ANSWER, ACOUNT
+FROM JYL_POLLSUB 
+WHERE POLLID=#{pollid}
+</select>
+	<insert id="makePoll"
+	parameterType="com.mirhenge.jyl.poll.model.JYLPoll">
+	INSERT INTO JYL_POLL  
+	(POLLID,ID, QUESTION, 
+	SDATE ,EDATE, ITEMCOUNT,
+	POLLTOTAL, REGDATE) 
+	VALUES (SEQ_JYL_POLL.NEXTVAL,
+	#{id},#{question}, #{sdate},#{edate}, #{itemcount},
+	0, SYSDATE) 
+	</insert>
+	<insert id="makePollSub"
+	parameterType="com.mirhenge.jyl.poll.model.JYLPollSub">
+	INSERT INTO JYL_POLLSUB 
+	(POLLSUBID, POLLID, ANSWER, ACOUNT ) 
+	VALUES (SEQ_JYL_POLLSUB.NEXTVAL, 
+	(SELECT NVL(MAX(POLLID),0) FROM JYL_POLL)
+	, #{answer}, 0)
+	</insert>	
+<!-- 	SELECT SEQ_HKM_POLL.CURRVAL  FROM HKM_POLL -->
+
+<select id="getPollAllList" 
+resultType="com.mirhenge.jyl.poll.model.JYLPoll">
+SELECT POLLID, ID, QUESTION,
+SDATE ,EDATE,ITEMCOUNT,
+POLLTOTAL,REGDATE 
+FROM JYL_POLL 
+ORDER BY SDATE DESC 
+</select>
+<!-- WHERE TO_DATE(EDATE,'YYYY-MM-DD') >= TO_DATE(SYSDATE,'YYYY-MM-DD') -->
+<select id="isVote" 
+parameterType="com.mirhenge.jyl.poll.model.JYLPoll"
+resultType="java.lang.Integer">
+SELECT COUNT(*)
+FROM JYL_VOTER
+WHERE POLLID=#{pollid} AND ID=#{id}
+</select>				
+<insert id="pollingVote" 
+parameterType="com.mirhenge.jyl.poll.model.JYLVoter">
+INSERT INTO JYL_VOTER(VOTERID,POLLID, POLLSUBID, ID,REGDATE) 
+VALUES(SEQ_JYL_VOTER.NEXTVAL,
+#{pollid}, #{pollsubid},#{id}, SYSDATE) 
+</insert>
+<update id="pollingSub" 
+parameterType="com.mirhenge.jyl.poll.model.JYLVoter">
+UPDATE JYL_POLLSUB SET ACOUNT = ACOUNT+1
+WHERE POLLID=#{pollid} AND POLLSUBID=#{pollsubid}
+</update>
+<update id="pollingPoll" 
+parameterType="com.mirhenge.jyl.poll.model.JYLVoter">
+UPDATE JYL_POLL SET POLLTOTAL = POLLTOTAL + 1
+WHERE POLLID=#{pollid} 
+</update>
+
+	
+ </mapper>

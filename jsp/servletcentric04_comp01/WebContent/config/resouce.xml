@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<resources>
+<resource>
+    <key>viewlist</key>
+    <value>/custuserlist.jsp</value>
+</resource>
+<resource>
+    <key>errors</key>
+    <value>/custerror.jsp</value>
+</resource>
+<resource>
+    <key>update</key>
+    <value>/custuserupdate.jsp</value>
+</resource>
+<resource>
+    <key>detail</key>
+    <value>/custuserdetail.jsp</value>
+    </resource>
+</resources>

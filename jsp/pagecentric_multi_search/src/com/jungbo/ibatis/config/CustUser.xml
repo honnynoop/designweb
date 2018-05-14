@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+
+<sqlMap namespace="CustUser">
+	<resultMap id="custUserDto" class="com.jungbo.pagecentric.CustUserDto">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="address" column="ADDRESS" />
+	</resultMap>
+
+	<select id="getCustIdList" resultClass="com.jungbo.pagecentric.CustUserDto">
+		SELECT ID FROM CUSTUSER
+	</select>
+
+	<select id="getCustUserList" parameterClass="java.util.Map" resultMap="custUserDto" 
+	resultClass="com.jungbo.pagecentric.CustUserDto">
+		    		SELECT ID,NAME,ADDRESS FROM 
+  		            ( 
+  		            	SELECT ROW_NUMBER() OVER(ORDER BY ID DESC)  RN, 
+  		            	ID,NAME,ADDRESS FROM CUSTUSER
+  		            ) 
+  		            WHERE RN BETWEEN #startpage# AND #endpage# 
+  		            <dynamic prepend="AND">
+  		            	<isNotNull property="id">
+  		            		ID LIKE '%$id$%'
+  		            	</isNotNull>
+  		            	<isNotNull property="name">
+  		            		AND NAME LIKE '%$name$%'
+  		            	</isNotNull>
+  		            </dynamic>					
+	</select>
+	
+	<select id="getCount"  resultClass="int" >
+					SELECT COUNT(ID)  
+					  FROM CUSTUSER
+					<dynamic prepend="WHERE">
+  		            	<isNotNull property="id">
+  		            		ID LIKE '%$id$%'
+  		            	</isNotNull>
+  		            	<isNotNull property="name">
+  		            		AND NAME LIKE '%$name$%'
+  		            	</isNotNull>
+  		            </dynamic>
+	</select>
+
+	<select id="getCustUser" resultMap="custUserDto" parameterClass="String" 
+	 resultClass="com.jungbo.pagecentric.CustUserDto">
+		 		 SELECT ID,NAME,ADDRESS FROM CUSTUSER WHERE  ID=#id#
+	</select>
+	
+	<insert id="addCustUser" parameterClass="com.jungbo.pagecentric.CustUserDto">
+					INSERT INTO CUSTUSER (ID,NAME,ADDRESS)
+				    VALUES( 
+										#id#              		
+										,#name#			
+										,#address# 
+						  ) 		
+	</insert>	
+	<update id="updateCustUser" parameterClass="com.jungbo.pagecentric.CustUserDto">
+	              UPDATE CUSTUSER SET 
+		              NAME=#name#	 ,
+		              ADDRESS=#address#
+	              WHERE ID=#id#
+  	</update>	
+  	
+	<delete id="deleteCustUser" parameterClass="String">
+	  DELETE FROM CUSTUSER WHERE ID=#id#
+	</delete>
+	
+</sqlMap>

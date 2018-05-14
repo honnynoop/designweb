@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+<display-name>servletcentric04_comp01</display-name>
+  <listener>
+    <listener-class>com.jungbo.servlet.centric.help.CustUserServletContextListener</listener-class>
+  </listener>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <servlet>
+    <servlet-name>custcontrol</servlet-name>
+    <servlet-class>com.jungbo.servlet.centric.control.CustUserControlServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>custcontrol</servlet-name>
+    <url-pattern>/custusercontrol.jsp</url-pattern>
+  </servlet-mapping>
+    <!--  
+  <filter>
+    <display-name>init.do</display-name>
+    <filter-name>init.do</filter-name>
+    <filter-class>com.jungbo.servlet.centric.help.ActionInitMappingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>init.do</filter-name>
+    <url-pattern>*.jsp</url-pattern>
+  </filter-mapping>
+  -->
+</web-app>

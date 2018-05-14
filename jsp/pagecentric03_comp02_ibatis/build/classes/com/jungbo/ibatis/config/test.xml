@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aa>
+<settings useStatementNamespaces="true"
+              cacheModelsEnabled="false"/>
+  <transactionManager type="JDBC" commitRequired="false">
+    <dataSource type="JNDI">
+      <property name="name" value="java:/comp/env/jdbc/ds"/>
+    </dataSource>
+  </transactionManager>
+    <transactionManager type="JDBC" commitRequired="false">
+    <dataSource type="SIMPLE">
+      <property name="JDBC.Driver" value="oracle.jdbc.driver.OracleDriver"/>
+      <property name="JDBC.ConnectionURL" value="jdbc:oracle:thin:@127.0.0.1:1521:xe"/>
+      <property name="JDBC.Username" value="hr"/>
+      <property name="JDBC.Password" value="jungbo"/>
+    </dataSource>
+  </transactionManager>
+  </aa>

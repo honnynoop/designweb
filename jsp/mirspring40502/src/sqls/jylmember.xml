@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="JYLMember"> 
+
+	<insert id="addMember"  
+	parameterType="com.mirhenge.jyl.member.model.JYLMember">
+		INSERT INTO JYL_MEMBER (ID,NAME,EMAIL,PWD, DELFLAG, AUTH)
+		VALUES(#{id},#{name},#{email},#{pwd},0,3) 
+	</insert>
+	<select id="checkMember"
+	parameterType="com.mirhenge.jyl.member.model.JYLMember"
+	resultType="com.mirhenge.jyl.member.model.JYLMember">
+		SELECT ID,NAME,EMAIL,DELFLAG, AUTH
+		FROM JYL_MEMBER
+		WHERE ID=#{id} AND PWD=#{pwd}
+	</select>
+
+	<select id="getID"
+	resultType="java.lang.Integer"
+	parameterType="com.mirhenge.jyl.member.model.JYLMember">
+		SELECT NVL(COUNT(*),0)
+		FROM JYL_MEMBER WHERE ID=#{id}
+	</select>
+<select id="getIDList"
+	resultType="com.mirhenge.jyl.member.model.JYLMember">
+		SELECT ID, TEAM FROM JYL_MEMBER WHERE AUTH=3
+	</select>
+ </mapper>

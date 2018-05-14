@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="JYLCalendar"> 
+
+	<insert id="writeCalendar"
+	parameterType="com.mirhenge.jyl.calendar.model.JYLCalendar">
+		INSERT INTO JYL_CALENDAR
+		(SEQ,ID, TITLE, CONTENT, WDATE,REGDATE)
+		VALUES(SEQ_JYL_CALENDAR.NEXTVAL,
+		#{id},#{title},#{content},#{wdate},SYSDATE)
+	</insert>
+	
+	<select id="getCalendarList"
+	parameterType="com.mirhenge.jyl.calendar.model.JYLCalendar"
+	resultType="com.mirhenge.jyl.calendar.model.JYLCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT, WDATE,REGDATE FROM
+	( SELECT ROW_NUMBER() OVER 
+	  ( PARTITION BY SUBSTR(WDATE,1,8) ORDER BY WDATE ASC ) RN, 
+        SEQ,ID, TITLE, CONTENT, WDATE,REGDATE 
+        FROM JYL_CALENDAR 
+        WHERE  ID=#{id} AND SUBSTR(WDATE,1,6) = #{wdate} ) 
+        WHERE RN BETWEEN 1 AND 5
+	</select>
+	<select id="getCalendarList2"
+	parameterType="com.mirhenge.jyl.calendar.model.JYLCalendar"
+	resultType="com.mirhenge.jyl.calendar.model.JYLCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT,
+	 SUBSTR(WDATE,1,4)||'년 '||SUBSTR(WDATE,5,2)||'월 '||SUBSTR(WDATE,7,2)||'일 '
+	||SUBSTR(WDATE,9,2)||'시 '||SUBSTR(WDATE,11,2)||'분 ' WDATE,
+	 REGDATE FROM
+	( SELECT ROW_NUMBER() OVER 
+	  ( PARTITION BY SUBSTR(WDATE,1,8) ORDER BY WDATE ASC ) RN, 
+        SEQ,ID, TITLE, CONTENT, WDATE,REGDATE 
+        FROM JYL_CALENDAR 
+        WHERE  ID=#{id} AND SUBSTR(WDATE,1,6) = #{wdate} ) 
+        ORDER BY WDATE ASC
+	</select>
+	
+	<select id="getDayList"
+	parameterType="com.mirhenge.jyl.calendar.model.JYLCalendar"
+	resultType="com.mirhenge.jyl.calendar.model.JYLCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT, 
+	SUBSTR(WDATE,1,4)||'년 '||SUBSTR(WDATE,5,2)||'월 '||SUBSTR(WDATE,7,2)||'일 '
+	||SUBSTR(WDATE,9,2)||'시 '||SUBSTR(WDATE,11,2)||'분 ' WDATE
+	,REGDATE
+	FROM JYL_CALENDAR 
+	WHERE ID=#{id} AND  SUBSTR(WDATE,1,8)=#{wdate}
+	order by WDATE asc
+	</select>
+	<select id="getDayList2"
+	parameterType="com.mirhenge.jyl.calendar.model.JYLCalendar"
+	resultType="com.mirhenge.jyl.calendar.model.JYLCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT, WDATE,REGDATE
+	FROM JYL_CALENDAR 
+	WHERE ID=#{id} AND  SUBSTR(WDATE,1,8)=#{wdate}
+	order by WDATE asc
+	</select>
+	<select id="getDay"
+	parameterType="com.mirhenge.jyl.calendar.model.JYLCalendar"
+	resultType="com.mirhenge.jyl.calendar.model.JYLCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT, WDATE,REGDATE
+	FROM JYL_CALENDAR 
+	WHERE SEQ=#{seq} 
+	</select>
+		<insert id="calupdate"
+	parameterType="com.mirhenge.jyl.calendar.model.JYLCalendar">
+	UPDATE  JYL_CALENDAR SET
+		TITLE=#{title}, CONTENT=#{content}, WDATE=#{wdate}
+		WHERE SEQ=#{seq}
+	</insert>
+
+	<insert id="caldel"
+	parameterType="com.mirhenge.jyl.calendar.model.JYLCalendar">
+	DELETE FROM   JYL_CALENDAR WHERE SEQ=#{seq}
+	</insert>
+	
+   <select id="getNotice" parameterType="HashMap"  resultType="com.mirhenge.jyl.calendar.model.NoticeDto">
+		SELECT TO_NUMBER(SUBSTR(WDATE,1,4)) YEAR,
+		TO_NUMBER(SUBSTR(WDATE,5,2)) MONTH,
+		TO_NUMBER(SUBSTR(WDATE,7,2)) DAY,
+		TITLE, CONTENT
+		from JYL_CALENDAR
+		WHERE (TO_NUMBER(SUBSTR(WDATE,1,4)) BETWEEN #{syear} AND #{eyear})
+		 AND (TO_NUMBER(SUBSTR(WDATE,5,2)) BETWEEN #{smon} AND #{emon})
+		ORDER BY DAY ASC
+	</select>
+	
+	
+ </mapper>
+

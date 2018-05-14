@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="JYLMBoard"> 
+
+	<insert id="writeBbs"  
+	parameterType="com.mirhenge.jyl.mboard.model.JYLMBoard">
+		INSERT INTO JYL_MBOARD(SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG) 
+		VALUES(SEQ_JYL_MBOARD.NEXTVAL,#{id},#{title},#{content},
+		SYSDATE,(SELECT NVL(MAX(REF),0)+1 FROM JYL_MBOARD)
+		,0,0,0,0)
+	</insert>
+	<select id="getBbsList"
+	resultType="com.mirhenge.jyl.mboard.model.JYLMBoard">
+		SELECT SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG
+		FROM JYL_MBOARD
+		ORDER BY REF ASC, STEP ASC
+	</select>
+	<select id="getBbs"
+	parameterType="com.mirhenge.jyl.mboard.model.JYLMBoard"
+	resultType="com.mirhenge.jyl.mboard.model.JYLMBoard">
+		SELECT SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG
+		FROM JYL_MBOARD
+		WHERE SEQ=#{seq}
+	</select>
+	<update id="replyBbsUpdate"
+	parameterType="com.mirhenge.jyl.mboard.model.JYLMBoard">
+	UPDATE JYL_MBOARD SET
+	STEP=STEP+1
+	WHERE REF=(SELECT REF FROM JYL_MBOARD WHERE SEQ=#{seq})
+	AND STEP>(SELECT STEP FROM JYL_MBOARD WHERE SEQ=#{seq})
+	</update>
+	<insert id="replyBbsInsert"  
+	parameterType="com.mirhenge.jyl.mboard.model.JYLMBoard">
+		INSERT INTO JYL_MBOARD
+		(SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG)
+		VALUES(
+		SEQ_JYL_MBOARD.NEXTVAL,
+		#{id},#{title},#{content},SYSDATE,
+		(SELECT REF FROM JYL_MBOARD WHERE SEQ=#{seq}),
+		(SELECT STEP FROM JYL_MBOARD WHERE SEQ=#{seq})+1,
+		(SELECT DEPTH FROM JYL_MBOARD WHERE SEQ=#{seq})+1,
+		#{seq},0) 
+	</insert>
+	<update id="updateBbs"
+	parameterType="com.mirhenge.jyl.mboard.model.JYLMBoard">
+		UPDATE JYL_MBOARD SET
+		TITLE=#{title}, CONTENT=#{content},WDATE=SYSDATE
+		WHERE SEQ=#{seq}
+	</update>
+	
+	<update id="bbsdelete"
+	parameterType="com.mirhenge.jyl.mboard.model.JYLMBoard">
+		UPDATE    JYL_MBOARD SET DELFLAG=1 
+		WHERE SEQ=#{seq}
+	</update>
+	
+	<select id="getBbsPageList"
+	parameterType="com.mirhenge.jyl.mboard.help.BbsParam"
+	resultType="com.mirhenge.jyl.mboard.model.JYLMBoard">
+	SELECT SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG
+	FROM 
+		( SELECT ROW_NUMBER() OVER (
+		ORDER BY  REF ASC, STEP ASC) as rnum,  
+		SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG 
+	FROM JYL_MBOARD
+	    WHERE 1 = 1 
+	     <if test="s_category != '' and s_category != null and s_keyword != '' and s_keyword != null">
+			<if test="s_category == 'title'"> AND TITLE like '%'||#{s_keyword}||'%'</if>	
+			<if test="s_category == 'contents'"> AND CONTENT like '%'||#{s_keyword}||'%'</if>	
+		</if>
+	    
+	    ) A
+			WHERE rnum between #{start} AND #{end}
+	</select>
+<select id="getBbsTotalCount"
+	parameterType="com.mirhenge.jyl.mboard.help.BbsParam"
+	resultType="java.lang.Integer">
+	SELECT NVL(count(*),0) AS cnt
+			  FROM   JYL_MBOARD  WHERE 1 = 1
+			  <if test="s_category != '' and s_category != null and s_keyword != '' and s_keyword != null">
+			<if test="s_category == 'title'"> AND TITLE like '%'||#{s_keyword}||'%'</if>	
+			<if test="s_category == 'contents'"> AND CONTENT like '%'||#{s_keyword}||'%'</if>	
+		</if>
+	</select>
+	
+		<select id="preView" parameterType="int" resultType="String">
+		select content from JYL_MBOARD where seq = #{seq}
+	</select>
+ </mapper>

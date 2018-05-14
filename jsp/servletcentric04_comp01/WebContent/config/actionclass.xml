@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<resources>
+<resource>
+    <key>list</key>
+    <value>
+    com.jungbo.servlet.centric.control.CustUserListAction
+    </value>
+</resource>
+<resource>
+    <key>add</key>
+    <value>
+    com.jungbo.servlet.centric.control.CustUserAddAction
+    </value>
+</resource>
+<resource>
+    <key>detail</key>
+    <value>
+    com.jungbo.servlet.centric.control.CustUserDetailAction
+    </value>
+</resource>
+<resource>
+    <key>bfupdate</key>
+    <value>
+    com.jungbo.servlet.centric.control.CustUserBeforeUpdateAction
+    </value>
+</resource>
+<resource>
+    <key>update</key>
+    <value>
+    com.jungbo.servlet.centric.control.CustUserUpdateAction
+    </value>
+</resource>
+<resource>
+    <key>delete</key>
+    <value>
+    com.jungbo.servlet.centric.control.CustUserDeleteAction
+    </value>
+</resource>
+<resource>
+    <key>muldel</key>
+    <value>
+    com.jungbo.servlet.centric.control.CustUserMultiDeleteActioin
+    </value>
+</resource>
+<resource>
+    <key>null</key>
+    <value>
+    com.jungbo.servlet.centric.control.CustUserNullAction
+    </value>
+</resource>
+</resources>

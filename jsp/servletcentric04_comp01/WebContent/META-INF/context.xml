@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+<!--  
+<ResourceLink global="jdbc/Oracle" name="jdbc/servlet"
+       type="javax.sql.DataSource"/>
+-->
+<Resource driverClassName="oracle.jdbc.driver.OracleDriver"
+maxActive="8" 
+maxIdle="8" 
+maxWait="5000" 
+name="jdbc/servlets" 
+username="hr"
+password="jungbo" 
+type="javax.sql.DataSource" 
+url="jdbc:oracle:thin:@127.0.0.1:1521:xe" />   
+</Context>

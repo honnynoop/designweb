@@ -1,0 +1,28 @@
+<GlobalNamingResources>
+<Resource driverClassName="oracle.jdbc.driver.OracleDriver"
+maxActive="4" 
+maxIdle="2" 
+maxWait="5000" 
+name="jdbc/Oracle" 
+username="hr"
+password="jungbo" 
+type="javax.sql.DataSource" 
+url="jdbc:oracle:thin:@127.0.0.1:1521:xe" />
+</GlobalNamingResources>
+
+
+<Context docBase="nomvcjstl_comp" path="/nomvcjstl_comp" 
+reloadable="true" source="org.eclipse.jst.jee.server:nomvcjstl_comp">
+<ResourceLink global="jdbc/Oracle" name="jdbc/nomvc"
+   type="javax.sql.DataSource"/>
+</Context>
+
+<sql:setDataSource dataSource="jdbc/nomvc" var="oracleDS"  scope="session"/>
+
+
+<sql:setDataSource var="oracleDS" 
+ driver="oracle.jdbc.driver.OracleDriver"
+ url="jdbc:oracle:thin:@127.0.0.1:1521:xe"
+ user="hr" 
+ password="jungbo"
+ scope="session"/>
