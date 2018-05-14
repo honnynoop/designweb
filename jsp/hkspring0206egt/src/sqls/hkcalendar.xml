@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="HKCalendar"> 
+
+	<insert id="writeCalendar"
+	parameterType="com.hk.mobile.member.model.HKCalendar">
+		INSERT INTO hkm_calendar
+		(SEQ,ID, TITLE, CONTENT, WDATE,REGDATE)
+		VALUES(SEQ_hkm_calendar.NEXTVAL,
+		#{id},#{title},#{content},#{wdate},SYSDATE)
+	</insert>
+	
+	<select id="getCalendarList"
+	parameterType="com.hk.mobile.member.model.HKCalendar"
+	resultType="com.hk.mobile.member.model.HKCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT, WDATE,REGDATE FROM
+	( SELECT ROW_NUMBER() OVER 
+	  ( PARTITION BY SUBSTR(WDATE,1,8) ORDER BY WDATE ASC ) RN, 
+        SEQ,ID, TITLE, CONTENT, WDATE,REGDATE 
+        FROM hkm_calendar 
+        WHERE  ID=#{id} AND SUBSTR(WDATE,1,6) = #{wdate} ) 
+        WHERE RN BETWEEN 1 AND 5
+	</select>
+	<select id="getCalendarList2"
+	parameterType="com.hk.mobile.member.model.HKCalendar"
+	resultType="com.hk.mobile.member.model.HKCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT,
+	 SUBSTR(WDATE,1,4)||'년 '||SUBSTR(WDATE,5,2)||'월 '||SUBSTR(WDATE,7,2)||'일 '
+	||SUBSTR(WDATE,9,2)||'시 '||SUBSTR(WDATE,11,2)||'분 ' WDATE,
+	 REGDATE FROM
+	( SELECT ROW_NUMBER() OVER 
+	  ( PARTITION BY SUBSTR(WDATE,1,8) ORDER BY WDATE ASC ) RN, 
+        SEQ,ID, TITLE, CONTENT, WDATE,REGDATE 
+        FROM hkm_calendar 
+        WHERE  ID=#{id} AND SUBSTR(WDATE,1,6) = #{wdate} ) 
+        ORDER BY WDATE ASC
+	</select>
+	
+	<select id="getDayList"
+	parameterType="com.hk.mobile.member.model.HKCalendar"
+	resultType="com.hk.mobile.member.model.HKCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT, 
+	SUBSTR(WDATE,1,4)||'년 '||SUBSTR(WDATE,5,2)||'월 '||SUBSTR(WDATE,7,2)||'일 '
+	||SUBSTR(WDATE,9,2)||'시 '||SUBSTR(WDATE,11,2)||'분 ' WDATE
+	,REGDATE
+	FROM hkm_calendar 
+	WHERE ID=#{id} AND  SUBSTR(WDATE,1,8)=#{wdate}
+	order by WDATE asc
+	</select>
+	<select id="getDayList2"
+	parameterType="com.hk.mobile.member.model.HKCalendar"
+	resultType="com.hk.mobile.member.model.HKCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT, WDATE,REGDATE
+	FROM hkm_calendar 
+	WHERE ID=#{id} AND  SUBSTR(WDATE,1,8)=#{wdate}
+	order by WDATE asc
+	</select>
+	<select id="getDay"
+	parameterType="com.hk.mobile.member.model.HKCalendar"
+	resultType="com.hk.mobile.member.model.HKCalendar">
+	SELECT SEQ,ID, TITLE, CONTENT, WDATE,REGDATE
+	FROM hkm_calendar 
+	WHERE SEQ=#{seq} 
+	</select>
+		<insert id="calupdate"
+	parameterType="com.hk.mobile.member.model.HKCalendar">
+	UPDATE  HKM_CALENDAR SET
+		TITLE=#{title}, CONTENT=#{content}, WDATE=#{wdate}
+		WHERE SEQ=#{seq}
+	</insert>
+	
+	
+		<insert id="caldel"
+	parameterType="com.hk.mobile.member.model.HKCalendar">
+	DELETE FROM   HKM_CALENDAR WHERE SEQ=#{seq}
+	</insert>
+ </mapper>
+

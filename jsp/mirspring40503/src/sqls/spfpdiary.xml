@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SpfpDiary"> 
+
+<select id="getSpfpDiaryList"
+resultType="com.mirhenge.jyl.spfp.model.SpfpDiary">
+SELECT 	SEQ, ID, WDATE, CONTENT
+FROM	SPFP_DIARY
+ORDER BY WDATE DESC
+
+</select>
+
+<select id="getSpfpDiary"
+parameterType="com.mirhenge.jyl.spfp.model.SpfpDiary"
+resultType="com.mirhenge.jyl.spfp.model.SpfpDiary">
+SELECT 	SEQ, SPFP_DIARY.ID as ID, WDATE, CONTENT, REF, IMG, JYL_MEMBER.TEAM as TEAM
+FROM	SPFP_DIARY INNER JOIN JYL_MEMBER
+ON		SPFP_DIARY.ID=JYL_MEMBER.ID
+WHERE	SEQ=#{seq}
+</select>
+
+<select id="getSpfpDay"
+parameterType="java.lang.String"
+resultType="com.mirhenge.jyl.spfp.model.SpfpDiary">
+SELECT 	SEQ, SPFP_DIARY.ID as ID, WDATE, CONTENT, JYL_MEMBER.TEAM as TEAM
+FROM	SPFP_DIARY  INNER JOIN JYL_MEMBER
+ON		SPFP_DIARY.ID=JYL_MEMBER.ID
+WHERE 	TO_CHAR(WDATE, 'YYYYMMDD') = #{yyyymmdd}
+ORDER BY WDATE DESC
+</select>
+
+<select id="getSpfpMonth"
+parameterType="java.lang.String"
+resultType="com.mirhenge.jyl.spfp.model.SpfpDiary">
+SELECT 	SEQ, B.ID as ID, WDATE, CONTENT, JYL_MEMBER.TEAM as TEAM
+FROM 	(SELECT ROW_NUMBER() OVER 
+	  ( PARTITION BY TO_CHAR(WDATE, 'YYYYMMDD') ORDER BY WDATE DESC ) RN, 
+        SEQ,ID, CONTENT, WDATE
+        FROM SPFP_DIARY 
+        WHERE TO_CHAR(WDATE, 'YYYYMM') = #{yyyymm}) B INNER JOIN JYL_MEMBER
+ON		B.ID=JYL_MEMBER.ID
+WHERE 	RN BETWEEN 1 AND 5
+</select>
+
+<insert id="writeSpfpDiary"
+parameterType="com.mirhenge.jyl.spfp.model.SpfpDiary">
+INSERT INTO SPFP_DIARY (
+	SEQ, ID, WDATE, CONTENT, REF, IMG
+)
+VALUES (
+	SEQ_SPFP_DIARY.NEXTVAL, #{id}, SYSDATE, #{content}, #{ref}, #{img}
+)
+</insert>
+
+<update id="updateSpfpDiary"
+parameterType="com.mirhenge.jyl.spfp.model.SpfpDiary">
+UPDATE SPFP_DIARY SET
+CONTENT=#{content}, REF=#{ref}, IMG=#{img}
+WHERE SEQ=#{seq}
+</update>
+
+<update id="updateTeam"
+parameterType="com.mirhenge.jyl.spfp.model.SpfpDiary">
+UPDATE JYL_MEMBER SET
+TEAM=#{team}
+WHERE ID=#{id}
+</update>
+
+<delete id="deleteSpfpDiary"
+parameterType="com.mirhenge.jyl.spfp.model.SpfpDiary">
+DELETE FROM SPFP_DIARY 
+WHERE SEQ=#{seq}
+</delete>
+
+ </mapper>

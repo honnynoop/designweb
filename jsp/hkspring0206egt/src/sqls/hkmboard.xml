@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="HKMBoard"> 
+
+	<insert id="writeBbs"  
+	parameterType="com.hk.mobile.member.model.HKMBoard">
+		INSERT INTO HKM_MBOARD(SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG) 
+		VALUES(SEQ_HKM_MBOARD.NEXTVAL,#{id},#{title},#{content},
+		SYSDATE,(SELECT NVL(MAX(REF),0)+1 FROM HKM_MBOARD)
+		,0,0,0,0)
+	</insert>
+	<select id="getBbsList"
+	resultType="com.hk.mobile.member.model.HKMBoard">
+		SELECT SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG
+		FROM HKM_MBOARD
+		ORDER BY REF ASC, STEP ASC
+	</select>
+	<select id="getBbs"
+	parameterType="com.hk.mobile.member.model.HKMBoard"
+	resultType="com.hk.mobile.member.model.HKMBoard">
+		SELECT SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG
+		FROM HKM_MBOARD
+		WHERE SEQ=#{seq}
+	</select>
+	<update id="replyBbsUpdate"
+	parameterType="com.hk.mobile.member.model.HKMBoard">
+	<![CDATA[
+	UPDATE HKM_MBOARD SET
+	STEP=STEP+1
+	WHERE REF=(SELECT REF FROM HKM_MBOARD WHERE SEQ=#{seq})
+	AND STEP>(SELECT STEP FROM HKM_MBOARD WHERE SEQ=#{seq})
+	]]>
+	</update>
+	<insert id="replyBbsInsert"  
+	parameterType="com.hk.mobile.member.model.HKMBoard">
+		INSERT INTO HKM_MBOARD
+		(SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG)
+		VALUES(
+		SEQ_HKM_MBOARD.NEXTVAL,
+		#{id},#{title},#{content},SYSDATE,
+		(SELECT REF FROM HKM_MBOARD WHERE SEQ=#{seq}),
+		(SELECT STEP FROM HKM_MBOARD WHERE SEQ=#{seq})+1,
+		(SELECT DEPTH FROM HKM_MBOARD WHERE SEQ=#{seq})+1,
+		#{seq},0) 
+	</insert>
+	<update id="updateBbs"
+	parameterType="com.hk.mobile.member.model.HKMBoard">
+		UPDATE HKM_MBOARD SET
+		TITLE=#{title}, CONTENT=#{content},WDATE=SYSDATE
+		WHERE SEQ=#{seq}
+	</update>
+	
+	<update id="bbsdelete"
+	parameterType="com.hk.mobile.member.model.HKMBoard">
+		UPDATE    HKM_MBOARD SET DELFLAG=1 
+		WHERE SEQ=#{seq}
+	</update>
+	
+	<select id="getBbsPageList"
+	parameterType="com.hk.mobile.help.BbsParam"
+	resultType="com.hk.mobile.member.model.HKMBoard">
+	SELECT SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG
+	FROM 
+		( SELECT ROW_NUMBER() OVER (
+		ORDER BY  REF DESC, STEP ASC) as rnum,  
+		SEQ ,ID ,TITLE,CONTENT,
+		WDATE,REF,STEP,DEPTH,PARENT,DELFLAG 
+	FROM HKM_MBOARD
+	    WHERE 1 = 1 
+	     <if test="s_category != '' and s_category != null and s_keyword != '' and s_keyword != null">
+			<if test="s_category == 'title'"> AND TITLE like '%'||#{s_keyword}||'%'</if>	
+			<if test="s_category == 'contents'"> AND CONTENT like '%'||#{s_keyword}||'%'</if>	
+		</if>
+	    
+	    ) A
+			WHERE rnum between #{start} AND #{end}
+	</select>
+<select id="getBbsTotalCount"
+	parameterType="com.hk.mobile.help.BbsParam"
+	resultType="java.lang.Integer">
+	SELECT NVL(count(*),0) AS cnt
+			  FROM   HKM_MBOARD  WHERE 1 = 1
+			  <if test="s_category != '' and s_category != null and s_keyword != '' and s_keyword != null">
+			<if test="s_category == 'title'"> AND TITLE like '%'||#{s_keyword}||'%'</if>	
+			<if test="s_category == 'contents'"> AND CONTENT like '%'||#{s_keyword}||'%'</if>	
+		</if>
+	</select>
+	
+	
+ </mapper>

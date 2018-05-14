@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="HKStudy"> 
+
+	<select id="getStudyList"
+	parameterType="com.hk.mobile.member.model.HKStudy"
+	resultType="com.hk.mobile.member.model.HKStudy">
+		SELECT SEQ,NUM,CATEGORY,ID,TITLE,CONTENT,
+		FILENAME,WDATE,READCOUNT
+		FROM HKSTUDY
+		WHERE CATEGORY=#{category}
+		ORDER BY NUM ASC	
+	</select>
+	<select id="getStudy"
+	parameterType="com.hk.mobile.member.model.HKStudy"
+	resultType="com.hk.mobile.member.model.HKStudy">
+		SELECT SEQ,NUM,CATEGORY,ID,TITLE,CONTENT,
+		FILENAME,WDATE,READCOUNT
+		FROM HKSTUDY
+		WHERE SEQ=#{seq}
+	</select>
+	<insert id="writeStudy"
+	parameterType="com.hk.mobile.member.model.HKStudy">
+		INSERT INTO HKSTUDY(SEQ,NUM,CATEGORY,ID,TITLE,CONTENT,
+		FILENAME,WDATE,READCOUNT)
+		VALUES(seq_hkstudy.nextval,
+		#{num},#{category},#{id},#{title},#{content},
+		 #{filename},SYSDATE,0)
+	</insert>
+		<select id="getCategoyList"
+	resultType="com.hk.mobile.member.model.HKCategory">
+		SELECT CATEGORY,CATEGORYNAME 
+		FROM HKCATEGORY
+		ORDER BY CATEGORY ASC	
+	</select>
+ </mapper>

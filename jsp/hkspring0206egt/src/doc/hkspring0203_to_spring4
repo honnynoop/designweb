@@ -1,0 +1,32 @@
+20160304
+spring 4.1로 변경 
+transaction 설정
+
+
+20160306 아작스를 위하여 다음 추가
+http://mavenrepository.com/search?q=jackson-annotation
+
+Jackson Databind
+Jackson Core
+Jackson Annotations
+
+{
+  "jina": [
+    {
+      "seq": 61,
+      "id": "kim",
+      "title": "시험준비",
+      "content": "시험",
+      "wdate": "2016년 03월 05일 18시 37분 ",
+      "regdate": "2016-03-03 18:37:24"
+    }
+  ]
+}
+http://localhost:8090/hkspring0204/calendarjson.do?id=kim&wdate=20160113
+
+regi idcheck ajax getID 이용 
+
+
+투표
+예외처리를 하려면 
+//@ControllerAdvice 풀것.

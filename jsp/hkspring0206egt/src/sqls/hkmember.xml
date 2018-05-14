@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="HKMember"> 
+
+	<insert id="addMember"  
+	parameterType="com.hk.mobile.member.model.HKMember">
+		INSERT INTO HKMOBILE_MEMBER (ID,NAME,EMAIL,PWD, DELFLAG, AUTH)
+		VALUES(#{id},#{name},#{email},#{pwd},0,3) 
+	</insert>
+	<select id="checkMember"
+	parameterType="com.hk.mobile.member.model.HKMember"
+	resultType="com.hk.mobile.member.model.HKMember">
+		SELECT ID,NAME,EMAIL,DELFLAG, AUTH
+		FROM HKMOBILE_MEMBER
+		WHERE ID=#{id} AND PWD=#{pwd}
+	</select>
+	
+	
+	<select id="getID"
+	resultType="java.lang.Integer"
+	parameterType="com.hk.mobile.member.model.HKMember">
+		SELECT nvl(COUNT(*),0)
+		FROM HKMOBILE_MEMBER WHERE ID=#{id}
+	</select>
+	
+
+	
+ </mapper>

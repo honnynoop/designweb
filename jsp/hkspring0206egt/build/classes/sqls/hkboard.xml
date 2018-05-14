@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="HKBoard"> 
+
+	
+	<select id="getBoardList"
+	resultType="com.hk.mobile.member.model.HKBoard">
+		SELECT SEQ ,ID ,TITLE,CONTENT,WDATE
+		FROM HKMOBILE_BOARD
+		ORDER BY SEQ ASC
+	</select>
+	<select id="getBoard"
+	parameterType="com.hk.mobile.member.model.HKBoard"
+	resultType="com.hk.mobile.member.model.HKBoard">
+		SELECT SEQ, ID,TITLE,CONTENT, WDATE 
+		FROM  HKMOBILE_BOARD 
+		WHERE SEQ=#{seq}
+	</select>
+		<select id="getBoardPageList"
+	parameterType="com.hk.mobile.help.BbsParam"
+	resultType="com.hk.mobile.member.model.HKBoard">
+	SELECT SEQ ,ID ,TITLE,CONTENT,WDATE
+	FROM 
+		( SELECT ROW_NUMBER() OVER (
+		ORDER BY  SEQ  ASC) as rnum,  
+		SEQ ,ID ,TITLE,CONTENT,WDATE
+	FROM HKMOBILE_BOARD
+	    WHERE 1 = 1 
+	     <if test="s_category != '' and s_category != null and s_keyword != '' and s_keyword != null">
+			<if test="s_category == 'title'"> AND TITLE like '%'||#{s_keyword}||'%'</if>	
+			<if test="s_category == 'contents'"> AND CONTENT like '%'||#{s_keyword}||'%'</if>	
+		</if>
+	    
+	    ) A
+			WHERE rnum between #{start} AND #{end}
+	</select>
+<select id="getBoardTotalCount"
+	parameterType="com.hk.mobile.help.BbsParam"
+	resultType="java.lang.Integer">
+	SELECT NVL(count(*),0) AS cnt
+			  FROM   HKMOBILE_BOARD  WHERE 1 = 1
+			  <if test="s_category != '' and s_category != null and s_keyword != '' and s_keyword != null">
+			<if test="s_category == 'title'"> AND TITLE like '%'||#{s_keyword}||'%'</if>	
+			<if test="s_category == 'contents'"> AND CONTENT like '%'||#{s_keyword}||'%'</if>	
+		</if>
+	</select>
+	<insert id="writeBoard"
+	parameterType="com.hk.mobile.member.model.HKBoard">
+		INSERT INTO HKMOBILE_BOARD 
+		(SEQ, ID,TITLE, CONTENT, WDATE) 
+		VALUES(SEQ_HKMOBILE_BOARD.NEXTVAL,
+		#{id},#{title},#{content},SYSDATE)
+	</insert>
+	<update id="updateBoard"
+	parameterType="com.hk.mobile.member.model.HKBoard">
+		UPDATE  HKMOBILE_BOARD SET
+		TITLE=#{title}, CONTENT=#{content}, WDATE=SYSDATE 
+		WHERE SEQ=#{seq}
+	</update>
+	<delete id="deleteBoard"
+	parameterType="com.hk.mobile.member.model.HKBoard">
+		DELETE FROM   HKMOBILE_BOARD
+		WHERE SEQ=#{seq}
+	</delete>
+ </mapper>

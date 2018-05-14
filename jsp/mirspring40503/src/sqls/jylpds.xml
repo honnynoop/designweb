@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="JYLPds"> 
+
+	<insert id="uploadPDS" 
+	parameterType="com.mirhenge.jyl.pds.model.JYLPds">
+				INSERT INTO JYL_PDS
+				(SEQ,
+				ID,TITLE,CONTENT,
+				FILENAME,READCOUNT,DOWNCOUNT,
+				REGDATE) 
+				VALUES(seq_JYL_PDS.NEXTVAL,
+			 	#{id},#{title},#{content},
+				#{filename},0,0,
+				SYSDATE)
+	</insert>
+	
+	<update id="updatePDS"
+	parameterType="com.mirhenge.jyl.pds.model.JYLPds">
+	UPDATE JYL_PDS SET TITLE=#{title},
+	CONTENT=#{content}, FILENAME=#{filename},
+	REGDATE=SYSDATE
+	WHERE SEQ=#{seq}
+	</update>
+	<delete id="delPDS"
+	parameterType="java.lang.Integer">
+	DELETE FROM  JYL_PDS 
+	WHERE SEQ=#{seq}
+	</delete>
+	
+	<select id="getPDSList" 
+	resultType="com.mirhenge.jyl.pds.model.JYLPds">
+		 		SELECT 
+				SEQ,
+				ID,TITLE,CONTENT,
+				FILENAME,READCOUNT,DOWNCOUNT,
+				REGDATE
+				FROM JYL_PDS 
+				order by seq
+	</select>
+	<select id="getPDS" 
+	resultType="com.mirhenge.jyl.pds.model.JYLPds" 
+	parameterType="java.lang.Integer">
+				SELECT 
+				SEQ,
+				ID,TITLE,CONTENT,
+				FILENAME,READCOUNT,DOWNCOUNT,
+				REGDATE
+				FROM JYL_PDS
+				WHERE SEQ=#{seq}
+	</select>
+	<update id="downloadCount" 
+	parameterType="java.lang.Integer">
+				UPDATE JYL_PDS SET 
+				DOWNCOUNT=DOWNCOUNT+1
+				WHERE SEQ=#{seq}
+	</update>
+	<update id="pdsReadCount" 
+	parameterType="java.lang.Integer">
+				UPDATE JYL_PDS SET 
+				READCOUNT=READCOUNT+1
+				WHERE SEQ=#{seq}
+	</update>
+</mapper>
